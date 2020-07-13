@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sofa="http://schema.alipay.com/sofa/schema/slite"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://schema.alipay.com/sofa/schema/slite   http://schema.alipay.com/sofa/slite.xsd"
+       default-autowire="byName">
+
+    <!-- This filter is in the aim of ensuring corss-orgin request. -->
+    <bean id="commonContainerResponseFilter" class="com.alipay.sofa.endpoint.filter.CommonContainerResponseFilter">
+        <property name="allowedOrigins">
+            <set>
+                <!-- In production environment, `localhost` should be replaced with the domain of the service. -->
+                <value>http://localhost:8080</value>
+                <value>http://localhost:8341</value>
+                <!-- This line ensures the usage of postman plugin in chrome -->
+                <value>chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop</value>
+            </set>
+        </property>
+    </bean>
+
+    <!-- SOFA REST resource to deal with REST request. -->
+    <bean id="sampleRestFacadeRest" class="com.alipay.sofa.endpoint.impl.SampleRestFacadeRestImpl"/>
+
+    <bean id="faviconRestFacadeRest" class="com.alipay.sofa.endpoint.impl.FaviconRestFacadeRestImpl"/>
+
+
+    <!-- 配置消息任务 BEGIN -->
+    <sofa:consumer id="uniformEventSubscriber" group="S_SCHEDULERTUTORIAL_MSG_DEMO">
+        <sofa:listener ref="schedulerDemo"/>
+        <sofa:channels>
+            <!-- channel value is the involved topic -->
+            <sofa:channel value="TP_F_SC">
+                <!-- each event represents a subscription -->
+                <sofa:event eventType="direct" eventCode="EC_TASK_SCHEDULERTUTORIAL_MSG_DEMO" persistence="false"/>
+            </sofa:channel>
+        </sofa:channels>
+        <sofa:binding.msg_broker/>
+    </sofa:consumer>
+    <!-- messageListener listener bean declaration, implements com.alipay.common.event.UniformEventMessageListener -->
+    <bean id="msgJobDemo" class="com.alipay.sofa.endpoint.task.MsgJobDemo"/>
+    <!-- 配置消息任务 END -->
+</beans>
