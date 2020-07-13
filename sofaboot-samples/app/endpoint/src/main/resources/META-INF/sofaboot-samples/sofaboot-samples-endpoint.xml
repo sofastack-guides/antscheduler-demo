@@ -28,7 +28,7 @@
 
     <!-- 配置消息任务 BEGIN -->
     <sofa:consumer id="uniformEventSubscriber" group="S_SCHEDULERTUTORIAL_MSG_DEMO">
-        <sofa:listener ref="schedulerDemo"/>
+        <sofa:listener ref="msgJobDemo"/>
         <sofa:channels>
             <!-- channel value is the involved topic -->
             <sofa:channel value="TP_F_SC">
